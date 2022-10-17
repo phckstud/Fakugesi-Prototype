@@ -14,10 +14,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] LayerMask ground;
     private SpriteRenderer sr;
 
-    [Header("Attacking Variables")]
-    [SerializeField] GameObject bulletObj;
-    [SerializeField] Transform spawnPoint;
-
     [Header("Integers")]
     public int sceneBuildindex;
 
@@ -35,8 +31,7 @@ public class PlayerMovement : MonoBehaviour
     public bool canMove;
     public bool isOldGrounded;
     public bool isJumping, isDoubleJumping, canDoubleJump;
-    public bool isRespawning, facingRight;
-    public bool isShooting;
+    public bool isRespawning, facingRight, inConversation;
 
     [Header("Strings")]
     [SerializeField] string sceneName;
@@ -72,13 +67,13 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        ConversationProbe();
+
         Move();
 
         Jump();
         GravityJump();
 
-        //Shoot
-        ShootAnim();
 
         if (isGrounded())
         {
@@ -117,15 +112,15 @@ public class PlayerMovement : MonoBehaviour
         
 
         // transform.Translate(move * speed * Time.deltaTime);
-        if (canMove && GameManager.animFinished == true)
+        if (canMove && GameManager.Instance.animFinished == true)
         {
             rb.velocity = move;
             UpdateFaceDirection(move);
 
             //Make sure player is moving
-            if (InputManager.Instance.move.x == 1f || InputManager.Instance.move.x == -1f && !isShooting)
+            if (InputManager.Instance.move.x == 1f || InputManager.Instance.move.x == -1f)
                 anim.Play(playerRun);
-            if (InputManager.Instance.move.x == 0 && !isShooting)
+            if (InputManager.Instance.move.x == 0)
                 anim.Play(playerIdle);
         }
 
@@ -160,7 +155,7 @@ public class PlayerMovement : MonoBehaviour
             canDoubleJump = true;
             InputManager.Instance.jump = false;
 
-            MusicManager.Instance.PlaySFX(MusicManager.Instance.Jump);
+            //MusicManager.Instance.PlaySFX(MusicManager.Instance.Jump);
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
 
@@ -259,33 +254,16 @@ public class PlayerMovement : MonoBehaviour
     }
 	#endregion
 
-	#region Attacking
-    public void ShootAnim()
-	{
-        if (InputManager.Instance.shoot && !isShooting && GameManager.animFinished)
-        {
-            anim.StopPlayback();
-            canMove = false;
-            anim.Play(playerAtt);
-            Debug.Log("Shoot");
-            isShooting = true;
-            InputManager.Instance.shoot = false;
-        }
-	}
+	#region Dialogue
 
-    public void Shoot()
-	{
-        canMove = true;
-        GameObject bulletPrefab = Instantiate(bulletObj, spawnPoint.position, Quaternion.identity);
-        bulletPrefab.GetComponent<BulletScript>().bulletToRight = facingRight;
-        isShooting = false;
-        InputManager.Instance.shoot = false;
+    void ConversationProbe()
+    {
+       inConversation = InputManager.Instance.onConversationEnter;
+       
+        if (inConversation)
+            return;
     }
 
-    public void EndShoot()
-	{
-        isShooting = false;
-    }
 	#endregion
 	IEnumerator DeathRoutine()
     {

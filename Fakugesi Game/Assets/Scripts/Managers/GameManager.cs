@@ -36,7 +36,7 @@ public class GameManager : Singleton<GameManager>
     Vector3 endPos;
 
     [Header("Booleans")]
-    public static bool animFinished;
+    public bool animFinished;
 
     [Header("Generic Elements")]
     public string animName;
@@ -49,8 +49,10 @@ public class GameManager : Singleton<GameManager>
         SetUpEntireLevel();
 
         player = GameObject.FindGameObjectWithTag("Player").transform;
-        animFinished = false;
-        anim.Play(animName);
+        //animFinished = false;
+
+        if(anim != null)
+            anim.Play(animName);
 
       
     }
@@ -58,7 +60,7 @@ public class GameManager : Singleton<GameManager>
    
     void Update()
     {
-       StartCoroutine(CamChanger());
+       //StartCoroutine(CamChanger());
     }
 
 	#region Level Set-Up

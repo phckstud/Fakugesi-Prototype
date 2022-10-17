@@ -117,8 +117,11 @@ public class DialogueManager : Singleton<DialogueManager>
         dialoguePanel.SetActive(false);
         dialogueText.text = "";
 
+        //Check if player can disengage in conversation
+        InputManager.Instance.onConversationEnter = false;
+
         //Check if the story should move on
-        if(VariableManager.Instance.GetStoryProgress())
+        if (VariableManager.Instance.GetStoryProgress())
 		{
             SceneManager.LoadScene(sceneName);
 		}

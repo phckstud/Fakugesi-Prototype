@@ -9,28 +9,32 @@ public enum MaskType { OFF, GONE, RED, GREEN, BLUE, CYAN, MAGENTA, YELLOW, BLACK
 [ExecuteInEditMode]
 public class SpriteMaskScript : MonoBehaviour
 {
-    private SpriteRenderer spriteRenderer;
-    private TilemapRenderer tileRenderer;
+    [Header("Unity Handles")]
+    public GameObject target;
+
+    [Header("Sprite Objects")]
+    [SerializeField] SpriteRenderer spriteRenderer;
+    [SerializeField] TilemapRenderer tileRenderer;
 
     public MaskType type = MaskType.OFF;
     public float distance = 4f;
-    public static GameObject target;
-    // Start is called before the first frame update
+  
+
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null) tileRenderer = GetComponent<TilemapRenderer>();
 
+        if (target == null) target = GameObject.FindGameObjectWithTag("MainCamera");
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-        if (target == null) target = GameObject.FindGameObjectWithTag("MainCamera");
         updateShader();
-        toggleShader();
+        //toggleShader();
     }
-    private int typeToInt()
+    private float typeToInt()
     {
         if (distance <= 0 || type == MaskType.OFF) return 0;
         switch (type)
@@ -52,7 +56,7 @@ public class SpriteMaskScript : MonoBehaviour
     }
     private void toggleShader()
     {
-        if (Input.GetKeyDown(KeyCode.Keypad0)) type = MaskType.OFF;
+       /* if (Input.GetKeyDown(KeyCode.Keypad0)) type = MaskType.OFF;
         if (Input.GetKeyDown(KeyCode.Keypad1)) type = MaskType.GONE;
         if (Input.GetKeyDown(KeyCode.Keypad2)) type = MaskType.RED;
         if (Input.GetKeyDown(KeyCode.Keypad3)) type = MaskType.GREEN;
@@ -64,7 +68,7 @@ public class SpriteMaskScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Keypad9)) type = MaskType.WHITE;
         if (Input.GetKeyDown(KeyCode.I)) type = MaskType.NEGATIVE;
         if (Input.GetKeyDown(KeyCode.O)) type = MaskType.GRAY;
-        if (Input.GetKeyDown(KeyCode.P)) type = MaskType.FADE;
+        if (Input.GetKeyDown(KeyCode.P)) type = MaskType.FADE;*/
         //distance = Mathf.Clamp(distance + Input.GetAxis("Vertical"), -0.1f, 12f);// might have to comment this line out.
     }
     private void updateShader()

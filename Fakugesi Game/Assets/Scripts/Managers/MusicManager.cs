@@ -92,6 +92,9 @@ public class MusicManager : SingletonPersistent<MusicManager>
     }
     public void PlayBGSound()
     {
+        if (BGMusic == null)
+            return;
+
         if (SceneManager.GetActiveScene().name == sceneName || SceneManager.GetActiveScene().name == introSceneName)
         {
             BGMusic.Stop(); 

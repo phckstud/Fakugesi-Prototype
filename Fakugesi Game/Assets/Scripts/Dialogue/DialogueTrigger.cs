@@ -12,7 +12,9 @@ public class DialogueTrigger : MonoBehaviour
     [Header("Ink JSON")]
     [SerializeField] private TextAsset inkJSON;
 
-    //private bool playerInRange;
+    [Header("Booleans")]
+    [SerializeField] bool playerInRange;
+    [SerializeField] bool requireInteraction;
 
     private void Awake()
     {
@@ -22,31 +24,38 @@ public class DialogueTrigger : MonoBehaviour
 
     private void Update()
     {
-        if (InputManager.Instance.onInteract && !DialogueManager.Instance.dialogueIsPlaying)
+        if (requireInteraction)
         {
-            DialogueManager.Instance.EnterDialogueMode(inkJSON);
-            InputManager.Instance.onInteract = false;
+            if (InputManager.Instance.onInteract && !DialogueManager.Instance.dialogueIsPlaying)
+            {
+                DialogueManager.Instance.EnterDialogueMode(inkJSON);
+                InputManager.Instance.onInteract = false;
+            }
         }
 
-        /* if (playerInRange && !DialogueManager.Instance.dialogueIsPlaying)
-         {
-             visualCue.SetActive(true);
-            /* if (InputManager.GetInstance().GetInteractPressed())
-             {
-                 DialogueManager.GetInstance().EnterDialogueMode(inkJSON);
-             }
-         }
-         else
-         {
-             visualCue.SetActive(false);
-         }*/
+       if(!requireInteraction)
+        {
+           if (playerInRange && !DialogueManager.Instance.dialogueIsPlaying)
+            {
+                visualCue.SetActive(true);
+                if (InputManager.Instance.onConversationEnter)
+                {
+                    DialogueManager.Instance.EnterDialogueMode(inkJSON);
+                }
+            }
+            else
+            {
+                visualCue.SetActive(false);
+            }
+        }
     }
 
-   /* private void OnTriggerEnter2D(Collider2D collider)
+   private void OnTriggerEnter2D(Collider2D collider)
     {
         if (collider.gameObject.tag == "Player")
         {
             playerInRange = true;
+            
         }
     }
 
@@ -56,7 +65,7 @@ public class DialogueTrigger : MonoBehaviour
         {
             playerInRange = false;
         }
-    }*/
+    }
 }
 
 /*

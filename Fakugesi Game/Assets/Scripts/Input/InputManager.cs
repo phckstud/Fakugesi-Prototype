@@ -13,6 +13,7 @@ using UnityEngine.InputSystem;
 		public bool slide;
 		public bool shoot;
 		public bool onInteract;
+		public bool onConversationEnter;
 		public bool back;
 		public bool onExit;
 
@@ -49,6 +50,10 @@ using UnityEngine.InputSystem;
 		{
 			InteractionInput(value.isPressed);
 		}
+		public void OnDialogueStart(InputValue value)
+		{
+			DialogueEnterInput(value.isPressed);
+		}
 
 		public void OnBack(InputValue value)
 		{
@@ -83,6 +88,11 @@ using UnityEngine.InputSystem;
 		public void SlideInput(bool newSlideState)
 		{
 			slide = newSlideState;
+		}
+
+		public void DialogueEnterInput(bool newInteractState)
+		{
+			onConversationEnter = newInteractState;
 		}
 
 		public void InteractionInput(bool newInteractState)
