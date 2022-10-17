@@ -1,0 +1,299 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+using UnityEngine;
+
+[RequireComponent(typeof(Rigidbody2D))]
+public class PlayerMovement : MonoBehaviour
+{
+    [Header("Unity Handles")]
+    public Transform groundCheck;
+    public Vector2 initialPos;
+    public Rigidbody2D rb;
+    public Animator anim;
+    [SerializeField] LayerMask ground;
+    private SpriteRenderer sr;
+
+    [Header("Attacking Variables")]
+    [SerializeField] GameObject bulletObj;
+    [SerializeField] Transform spawnPoint;
+
+    [Header("Integers")]
+    public int sceneBuildindex;
+
+    [Header("Floats")]
+    public float speed;
+    public float jumpForce, realForce, doubleJumpMultiplier;
+    public float gravity = 9.81f;
+    [SerializeField] float jumpingDisabler = 0.3f, defaultJumpingDisabler;
+
+    [Header("Better Jumping FLoats")]
+    [SerializeField] float fallMultiplier = 2.5f;
+    [SerializeField] float lowJumpMultipler = 2f;
+
+    [Header("Booleans")]
+    public bool canMove;
+    public bool isOldGrounded;
+    public bool isJumping, isDoubleJumping, canDoubleJump;
+    public bool isRespawning, facingRight;
+    public bool isShooting;
+
+    [Header("Strings")]
+    [SerializeField] string sceneName;
+
+    [Header("Animation Strings")]
+    [SerializeField] string playerIdle = "Rogue_idle_01";
+    [SerializeField] string playerRun = "Rogue_run_01";
+    [SerializeField] string playerAtt = "Rogue_attack_02";
+
+	private void Awake()
+	{
+        sceneBuildindex = SceneManager.sceneCountInBuildSettings;
+        anim = GetComponent<Animator>();
+    }
+	void Start()
+    {
+        // subscribe to events
+        
+
+        initialPos = transform.position;
+        defaultJumpingDisabler = jumpingDisabler;
+        realForce = jumpForce;
+
+        rb = GetComponent<Rigidbody2D>();
+        canMove = true;
+    }
+
+    private void OnDestroy()
+    {
+        // unsubscribe from events
+       
+    }
+
+    void Update()
+    {
+        Move();
+
+        Jump();
+        GravityJump();
+
+        //Shoot
+        ShootAnim();
+
+        if (isGrounded())
+        {
+            isOldGrounded = true;
+            //isJumping = false;
+            isDoubleJumping = false;
+
+            jumpForce = realForce;
+        }
+        else
+            isOldGrounded = false;
+
+        /*if (Input.GetKey(KeyCode.Tab))
+             SceneManager.LoadScene(0);
+
+                    canDoubleJump = false;
+             isDoubleJumping = false;
+             isJumping = false;
+         */
+    }
+
+	private void LateUpdate()
+	{
+        /*/ record replay data for this frame
+        ReplayData data = new PlayerReplayData(this.transform.position, isGrounded(),
+            rb.velocity, sr.color.a, facingRight);
+        recorder.RecordReplayFrame(data);*/
+    }
+	#region Movement
+	void Move()
+    {
+        if (isRespawning)
+            return;
+
+        Vector2 move = new Vector2(InputManager.Instance.move.x * speed * Time.deltaTime, rb.velocity.y);
+        
+
+        // transform.Translate(move * speed * Time.deltaTime);
+        if (canMove && GameManager.animFinished == true)
+        {
+            rb.velocity = move;
+            UpdateFaceDirection(move);
+
+            //Make sure player is moving
+            if (InputManager.Instance.move.x == 1f || InputManager.Instance.move.x == -1f && !isShooting)
+                anim.Play(playerRun);
+            if (InputManager.Instance.move.x == 0 && !isShooting)
+                anim.Play(playerIdle);
+        }
+
+    }
+
+    void UpdateFaceDirection(Vector2 dir)
+	{
+        if (dir.x > 0.1f)
+            facingRight = true;
+        else if (dir.x < -0.1f)
+            facingRight = false;
+
+        //Flip Character
+        if (facingRight)
+        {
+            this.transform.eulerAngles = new Vector3(this.transform.eulerAngles.x, 0, this.transform.eulerAngles.z);
+            //this.transform.localScale = new Vector2(this.transform.localScale.x, this.transform.localScale.y);
+        }
+        else
+        {
+            this.transform.eulerAngles = new Vector3(this.transform.eulerAngles.x, 180, this.transform.eulerAngles.z);
+           // this.transform.localScale = new Vector2(-this.transform.localScale.x, this.transform.localScale.y);
+        }
+    }
+	#endregion
+	#region Jumping
+	void Jump()
+    {
+        if (isGrounded() && InputManager.Instance.jump)
+        {
+            isJumping = true;
+            canDoubleJump = true;
+            InputManager.Instance.jump = false;
+
+            MusicManager.Instance.PlaySFX(MusicManager.Instance.Jump);
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+
+
+            jumpingDisabler = defaultJumpingDisabler;
+
+        }
+
+        DoubleJump();
+    }
+
+    void GravityJump()
+    {
+        if (rb.velocity.y < 0)
+            rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
+        else if (rb.velocity.y > 0 && !isGrounded())
+            rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultipler - 1) * Time.deltaTime;
+    }
+
+    void DoubleJump()
+    {
+        if (!isGrounded() && canDoubleJump)
+        {
+            jumpForce = realForce * doubleJumpMultiplier;
+
+            if (InputManager.Instance.jump && isJumping)
+            {
+
+                MusicManager.Instance.PlaySFX(MusicManager.Instance.Jump);
+                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+
+                canDoubleJump = false;
+                isDoubleJumping = true;
+                isJumping = false;
+                InputManager.Instance.jump = false;
+
+                Debug.Log("Double Jump!");
+
+                /*if (isGrounded())
+                    jumpForce = 0;
+                else
+                    jumpForce -= gravity * Time.deltaTime;
+                //*/
+
+                //transform.position += Vector3.up * jumpForce * Time.deltaTime;
+
+            }
+        }
+    }
+
+    bool isGrounded()
+    {
+        return Physics2D.OverlapCircle(groundCheck.position, 0.25f, ground);
+    }
+
+    #endregion
+
+    #region Win/Lose/Death
+    private void OnGoalReached()
+    {
+        /*/ freeze movement
+        rb.gravityScale = 0;
+        rb.velocity = Vector3.zero;
+        canMove = true;*/
+        // hide player visual
+        Debug.Log("Maybe Instantiate here!");
+    }
+
+    private void OnRestartLevel()
+    {
+        // ensure we don't jump right away on reset, since
+        // the submit button is the same as the jump button.
+        // this is specific to the InputManager in this project
+        InputManager.Instance.onInteract = true;
+        SceneManager.LoadScene(GameManager.Instance.sceneFailureName);
+        // respawn
+       
+    }
+    
+     void Death()
+    {
+            transform.position = new Vector2(initialPos.x, initialPos.y + 1);
+            jumpForce = 0;
+    }
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if(col.gameObject.tag == "Finish")
+        {
+            OnRestartLevel();
+            canMove = false;
+            Transform done = col.gameObject.GetComponent<Transform>();
+            //this.transform.position = new Vector2(done.position.x, done.position.y + postoAdd);
+            rb.bodyType = RigidbodyType2D.Static;
+        }
+
+        
+    }
+	#endregion
+
+	#region Attacking
+    public void ShootAnim()
+	{
+        if (InputManager.Instance.shoot && !isShooting && GameManager.animFinished)
+        {
+            anim.StopPlayback();
+            canMove = false;
+            anim.Play(playerAtt);
+            Debug.Log("Shoot");
+            isShooting = true;
+            InputManager.Instance.shoot = false;
+        }
+	}
+
+    public void Shoot()
+	{
+        canMove = true;
+        GameObject bulletPrefab = Instantiate(bulletObj, spawnPoint.position, Quaternion.identity);
+        bulletPrefab.GetComponent<BulletScript>().bulletToRight = facingRight;
+        isShooting = false;
+        InputManager.Instance.shoot = false;
+    }
+
+    public void EndShoot()
+	{
+        isShooting = false;
+    }
+	#endregion
+	IEnumerator DeathRoutine()
+    {
+        isRespawning = true;
+        rb.bodyType = RigidbodyType2D.Static;
+        Death();
+        yield return new WaitForSeconds(0.5f);
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        isRespawning = false;
+    }
+}
