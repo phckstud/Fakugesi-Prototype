@@ -14,7 +14,7 @@ public class DialogueTrigger : MonoBehaviour
 
     [Header("Booleans")]
     [SerializeField] bool playerInRange;
-    [SerializeField] bool requireInteraction;
+    [SerializeField] bool requireInteraction, forBook;
 
     private void Awake()
     {
@@ -24,7 +24,7 @@ public class DialogueTrigger : MonoBehaviour
 
     private void Update()
     {
-        if (requireInteraction)
+        if (requireInteraction && !forBook)
         {
             if (InputManager.Instance.onInteract && !DialogueManager.Instance.dialogueIsPlaying)
             {
@@ -33,7 +33,7 @@ public class DialogueTrigger : MonoBehaviour
             }
         }
 
-       if(!requireInteraction)
+       if(!requireInteraction && !forBook)
         {
            if (playerInRange && !DialogueManager.Instance.dialogueIsPlaying)
             {
@@ -49,6 +49,14 @@ public class DialogueTrigger : MonoBehaviour
             }
         }
     }
+
+    public void OpenBook()
+	{
+        if(forBook)
+		{
+            DialogueManager.Instance.EnterDialogueMode(inkJSON);
+        }
+	}
 
    private void OnTriggerEnter2D(Collider2D collider)
     {

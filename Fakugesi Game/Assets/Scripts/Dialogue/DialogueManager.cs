@@ -18,19 +18,27 @@ public class DialogueManager : Singleton<DialogueManager>
     [Header("Dialogue UI")]
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private GameObject continueIcon;
-    [SerializeField] private TextMeshProUGUI dialogueText;
-    [SerializeField] private TextMeshProUGUI displayNameText;
+    [SerializeField] private TextMeshProUGUI[] dialogueText;
+    [SerializeField] private TextMeshProUGUI[] displayNameText;
     [SerializeField] private Animator portraitAnimator;
-    [SerializeField] private Animator layoutAnimator;
+   // [SerializeField] private Animator layoutAnimator;
 
     [Header("Choices UI")]
     [SerializeField] private GameObject[] choices;
     [SerializeField] AudioSource sfx;
     private TextMeshProUGUI[] choicesText;
 
+    [Header("Integers")]
+    [SerializeField] int dialogueIndex;
+    [SerializeField] int displaynameIndex;
+
+    [Header("Booleans")]
+    [SerializeField] bool hasRunOnce;
+
     //To advance to the next level per finishing the story
     [Header("Generic Elements")]
     [SerializeField] string sceneName;
+    [SerializeField] string storeSpeaker, storeDialogueLines;
 
     private Story currentStory;
     public bool dialogueIsPlaying { get; private set; }
@@ -55,7 +63,9 @@ public class DialogueManager : Singleton<DialogueManager>
         dialogueIsPlaying = false;
         dialoguePanel.SetActive(false);
         sfx = GameObject.Find("SFX").GetComponent<AudioSource>();
+        hasRunOnce = false;
 
+      
         // get all of the choices text 
         choicesText = new TextMeshProUGUI[choices.Length];
         int index = 0;
@@ -88,6 +98,18 @@ public class DialogueManager : Singleton<DialogueManager>
         }
     }
 
+    public void ContinueStoryButton()
+	{
+        if (canContinueToNextLine
+          && currentStory.currentChoices.Count == 0)
+        {
+            if (sfx != null)
+                sfx.Play();
+
+            ContinueStory();
+        
+        }
+    }
     public void EnterDialogueMode(TextAsset inkJSON)
     {
         currentStory = new Story(inkJSON.text);
@@ -96,10 +118,10 @@ public class DialogueManager : Singleton<DialogueManager>
 
         dialogueVariables.StartListening(currentStory);
 
-        // reset portrait, layout, and speaker
-        displayNameText.text = "???";
+		// reset portrait, layout, and speaker
+		displayNameText[displaynameIndex].text = "???";
         portraitAnimator.Play("default");
-        layoutAnimator.Play("default");
+       // layoutAnimator.Play("default");
 
         ContinueStory();
     }
@@ -115,7 +137,7 @@ public class DialogueManager : Singleton<DialogueManager>
 
         dialogueIsPlaying = false;
         dialoguePanel.SetActive(false);
-        dialogueText.text = "";
+		dialogueText[dialogueIndex].text = "";
 
         //Check if player can disengage in conversation
         InputManager.Instance.onConversationEnter = false;
@@ -138,23 +160,47 @@ public class DialogueManager : Singleton<DialogueManager>
             {
                 StopCoroutine(displayLineCoroutine);
             }
+
+          /*  foreach (var item in dialogueText)
+            {
+                if (item.text == storeDialogueLines && displaynameIndex == dialogueIndex)
+                {
+                    if (dialogueIndex <= dialogueText.Length)
+                        dialogueIndex++;
+                    else
+                        dialogueIndex = 0;
+
+                    Debug.Log("Change Dialogue");
+                }
+            }*/
+
             displayLineCoroutine = StartCoroutine(DisplayLine(currentStory.Continue()));
+           
             // handle tags
             HandleTags(currentStory.currentTags);
             //Check and Update Variables
+           
             VariableManager.Instance.CheckAndUpdateVariables();
+
+            
         }
         else
         {
             StartCoroutine(ExitDialogueMode());
         }
+
+        hasRunOnce = true;
     }
 
     private IEnumerator DisplayLine(string line)
     {
-        // set the text to the full line, but set the visible characters to 0
-        dialogueText.text = line;
-        dialogueText.maxVisibleCharacters = 0;
+		// set the text to the full line, but set the visible characters to 0
+		dialogueText[dialogueIndex].text = line;
+        dialogueText[dialogueIndex].maxVisibleCharacters = 0;
+
+        //Store Dialogue
+        storeDialogueLines = dialogueText[dialogueIndex].text;
+
         // hide items while text is typing
         continueIcon.SetActive(false);
         HideChoices();
@@ -172,7 +218,7 @@ public class DialogueManager : Singleton<DialogueManager>
                 if(sfx != null)
                     sfx.Play();
 
-                dialogueText.maxVisibleCharacters = line.Length;
+				dialogueText[dialogueIndex].maxVisibleCharacters = line.Length;
                 InputManager.Instance.onInteract = false;
                 break;
             }
@@ -189,7 +235,7 @@ public class DialogueManager : Singleton<DialogueManager>
             // if not rich text, add the next letter and wait a small time
             else
             {
-                dialogueText.maxVisibleCharacters++;
+				dialogueText[dialogueIndex].maxVisibleCharacters++;
                 yield return new WaitForSeconds(typingSpeed);
             }
         }
@@ -197,6 +243,26 @@ public class DialogueManager : Singleton<DialogueManager>
         // actions to take after the entire line has finished displaying
         continueIcon.SetActive(true);
         DisplayChoices();
+
+        if (hasRunOnce)
+        {
+            foreach (var item in displayNameText)
+            {
+                if (item.text == storeSpeaker && displaynameIndex == dialogueIndex)
+                {
+                    if (displaynameIndex < displayNameText.Length - 1)
+                    {
+                        displaynameIndex++;
+                    }
+                    else
+                        displaynameIndex = 0;
+
+                    dialogueIndex = displaynameIndex;
+
+                    Debug.Log("Change Speaker");
+                }
+            }
+        }
 
         canContinueToNextLine = true;
     }
@@ -227,14 +293,15 @@ public class DialogueManager : Singleton<DialogueManager>
             switch (tagKey)
             {
                 case SPEAKER_TAG:
-                    displayNameText.text = tagValue;
+					displayNameText[displaynameIndex].text = tagValue;
+                    storeSpeaker = tagValue;
                     break;
                 case PORTRAIT_TAG:
                     portraitAnimator.Play(tagValue);
                     break;
-                case LAYOUT_TAG:
+               /* case LAYOUT_TAG:
                     layoutAnimator.Play(tagValue);
-                    break;
+                    break;*/
                 default:
                     Debug.LogWarning("Tag came in but is not currently being handled: " + tag);
                     break;
@@ -252,6 +319,9 @@ public class DialogueManager : Singleton<DialogueManager>
             Debug.LogError("More choices were given than the UI can support. Number of choices given: "
                 + currentChoices.Count);
         }
+
+        if (currentChoices.Count <= 0)
+            return;
 
         int index = 0;
         // enable and initialize the choices up to the amount of choices for this line of dialogue

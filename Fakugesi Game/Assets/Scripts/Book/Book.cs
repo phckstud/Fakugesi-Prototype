@@ -8,8 +8,11 @@ using UnityEngine;
 public class Book : MonoBehaviour
 {
     [Header("Unity Handles")]
+    [SerializeField] GameObject middlePage;
     [SerializeField] Button openBtn;
-    [SerializeField] Vector3 rotationVector;
+    [SerializeField] Vector3 rotationVector, defaultRotationVector;
+    [SerializeField] Vector3 startPos;
+    [SerializeField] Quaternion startRot;
 
     [Header("Generic Values")]
     [SerializeField] DateTime startTime;
@@ -20,8 +23,15 @@ public class Book : MonoBehaviour
 
     void Start()
     {
-        if (openBtn != null)
-            openBtn.onClick.AddListener(() => OpenBook());
+        /*if (openBtn != null)
+            openBtn.onClick.AddListener(() => OpenBook());*/
+
+        //Store Rotation Vector
+        defaultRotationVector = rotationVector;
+
+        //Store starting Position and rotation
+        startRot = transform.rotation;
+        startPos = transform.position;
     }
 
    
@@ -29,18 +39,18 @@ public class Book : MonoBehaviour
     {
         if(bookButtonIsPressed)
 		{
-            transform.Rotate(rotationVector * Time.deltaTime);
+            transform.Rotate(-rotationVector * Time.deltaTime);
             endTime = DateTime.Now;
 
             if((endTime - startTime).TotalSeconds >= 1)
 			{
+                middlePage.SetActive(true);
                 bookButtonIsPressed = false;
-                
             }
 		}
     }
 
-    void OpenBook()
+    public void OpenBook()
 	{
         bookButtonIsPressed = true;
         startTime = DateTime.Now;
