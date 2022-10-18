@@ -18,9 +18,9 @@ public class DialogueManager : Singleton<DialogueManager>
     [Header("Dialogue UI")]
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private GameObject continueIcon;
-    [SerializeField] private TextMeshProUGUI[] dialogueText;
-    [SerializeField] private TextMeshProUGUI[] displayNameText;
-    [SerializeField] private Animator portraitAnimator;
+    [SerializeField] private Text[] dialogueText;
+    [SerializeField] private Text[] displayNameText;
+    [SerializeField] private Animator[] portraitAnimator;
    // [SerializeField] private Animator layoutAnimator;
 
     [Header("Choices UI")]
@@ -30,7 +30,7 @@ public class DialogueManager : Singleton<DialogueManager>
 
     [Header("Integers")]
     [SerializeField] int dialogueIndex;
-    [SerializeField] int displaynameIndex;
+    [SerializeField] int displaynameIndex, portraitAnimatorIndex;
 
     [Header("Booleans")]
     [SerializeField] bool hasRunOnce;
@@ -62,7 +62,7 @@ public class DialogueManager : Singleton<DialogueManager>
     {
         dialogueIsPlaying = false;
         dialoguePanel.SetActive(false);
-        sfx = GameObject.Find("SFX").GetComponent<AudioSource>();
+       // sfx = GameObject.Find("SFX").GetComponent<AudioSource>();
         hasRunOnce = false;
 
       
@@ -120,7 +120,7 @@ public class DialogueManager : Singleton<DialogueManager>
 
 		// reset portrait, layout, and speaker
 		displayNameText[displaynameIndex].text = "???";
-        portraitAnimator.Play("default");
+		portraitAnimator[portraitAnimatorIndex].Play("default");
        // layoutAnimator.Play("default");
 
         ContinueStory();
@@ -198,7 +198,7 @@ public class DialogueManager : Singleton<DialogueManager>
     {
 		// set the text to the full line, but set the visible characters to 0
 		dialogueText[dialogueIndex].text = line;
-        dialogueText[dialogueIndex].maxVisibleCharacters = 0;
+        //dialogueText[dialogueIndex].maxVisibleCharacters = 0;
 
         //Store Dialogue
         storeDialogueLines = dialogueText[dialogueIndex].text;
@@ -220,7 +220,7 @@ public class DialogueManager : Singleton<DialogueManager>
                 if(sfx != null)
                     sfx.Play();
 
-				dialogueText[dialogueIndex].maxVisibleCharacters = line.Length;
+				//dialogueText[dialogueIndex].maxVisibleCharacters = line.Length;
                 InputManager.Instance.onInteract = false;
                 break;
             }
@@ -237,7 +237,7 @@ public class DialogueManager : Singleton<DialogueManager>
             // if not rich text, add the next letter and wait a small time
             else
             {
-				dialogueText[dialogueIndex].maxVisibleCharacters++;
+				//dialogueText[dialogueIndex].maxVisibleCharacters++;
                 yield return new WaitForSeconds(typingSpeed);
             }
         }
@@ -260,6 +260,7 @@ public class DialogueManager : Singleton<DialogueManager>
                         displaynameIndex = 0;
 
                     dialogueIndex = displaynameIndex;
+                    portraitAnimatorIndex = displaynameIndex;
 
                     Debug.Log("Change Speaker");
                 }
@@ -299,7 +300,7 @@ public class DialogueManager : Singleton<DialogueManager>
                     storeSpeaker = tagValue;
                     break;
                 case PORTRAIT_TAG:
-                    portraitAnimator.Play(tagValue);
+					portraitAnimator[portraitAnimatorIndex].Play(tagValue);
                     break;
                /* case LAYOUT_TAG:
                     layoutAnimator.Play(tagValue);
