@@ -8,7 +8,9 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Unity Handles")]
     public Transform groundCheck;
+    public Transform mask;
     public Vector2 initialPos;
+    public Vector3 maxMaskSize, defaultMaskLocalScale;
     public Rigidbody2D rb;
     public Animator anim;
     [SerializeField] LayerMask ground;
@@ -27,11 +29,17 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float fallMultiplier = 2.5f;
     [SerializeField] float lowJumpMultipler = 2f;
 
+    [Header("Mask Ability FLoats")]
+    [SerializeField] float growMultiplier = 0.75f;
+    [SerializeField] float decreaseGrowthMultiplier = 0.65f;
+    [SerializeField] float rangeForMouseMove = 7f;
+
     [Header("Booleans")]
     public bool canMove;
     public bool isOldGrounded;
     public bool isJumping, isDoubleJumping, canDoubleJump;
     public bool isRespawning, facingRight, inConversation;
+    public bool hasMask;
 
     [Header("Strings")]
     [SerializeField] string sceneName;
@@ -57,6 +65,9 @@ public class PlayerMovement : MonoBehaviour
 
         rb = GetComponent<Rigidbody2D>();
         canMove = true;
+
+        if (mask != null)
+            defaultMaskLocalScale = mask.localScale;
     }
 
     private void OnDestroy()
@@ -73,6 +84,7 @@ public class PlayerMovement : MonoBehaviour
 
         Jump();
         GravityJump();
+        LetOutmask();
 
 
         if (isGrounded())
@@ -264,6 +276,55 @@ public class PlayerMovement : MonoBehaviour
             return;
     }
 
+	#endregion
+
+	#region Mask Ability
+    public void LetOutmask()
+	{
+        if (hasMask)
+        {
+            if (InputManager.Instance.onMaskAbility)
+            {
+                Debug.Log("Mask IN USE");
+                mask.gameObject.SetActive(true);
+
+                if (mask.localScale.y <= maxMaskSize.y && mask.localScale.x <= maxMaskSize.x)
+                    mask.localScale += new Vector3(mask.localScale.x, mask.localScale.y) * growMultiplier * Time.deltaTime;
+            }
+            else
+            {
+                if (mask.localScale.y > defaultMaskLocalScale.y || mask.localScale.x > defaultMaskLocalScale.x)
+                    mask.localScale -= new Vector3(mask.localScale.x, mask.localScale.y) * decreaseGrowthMultiplier * Time.deltaTime;
+                else
+                {
+                    mask.localScale = defaultMaskLocalScale;
+                    mask.gameObject.SetActive(false);
+                }
+
+            }
+
+            if (InputManager.Instance.click)
+            {
+                //looks for player input/mouse position
+                Vector2 mousePos = InputManager.Instance.mouseMove;
+                mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+                //Debug.Log(mousePos);
+
+                
+                float dis = Vector3.Distance(transform.position, mousePos);
+                //Debug.Log("Distance: " + dis);
+
+                //Limit the distance
+                if (dis < rangeForMouseMove)
+                {
+                    mask.position = mousePos;
+                    InputManager.Instance.click = false;
+
+                }
+                InputManager.Instance.click = false;
+            }
+        }
+	}
 	#endregion
 	IEnumerator DeathRoutine()
     {

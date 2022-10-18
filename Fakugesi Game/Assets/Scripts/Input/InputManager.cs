@@ -7,12 +7,15 @@ using UnityEngine.InputSystem;
 	public class InputManager : Singleton<InputManager>
 	{
 		[Header("Character Input Values")]
+		public Vector2 mouseMove;
 		public Vector2 move;
 		public bool jump;
+		public bool click;
 		public bool doubleJump; 
 		public bool slide;
 		public bool shoot;
 		public bool onInteract;
+		public bool onMaskAbility;
 		public bool onConversationEnter;
 		public bool back;
 		public bool onExit;
@@ -32,10 +35,23 @@ using UnityEngine.InputSystem;
 		public void OnJump(InputValue value)
 		{
 			JumpInput(value.isPressed);
+		
 		}
 		public void OnDoubleJump(InputValue value)
 		{
 			DoubleJumpInput(value.isPressed);
+		}
+	public void OnMousePos(InputValue value)
+	{
+		MouseInput(value.Get<Vector2>());
+	}
+	public void OnMouseClick(InputValue value)
+	{
+		MouseClickInput(value.isPressed);
+	}
+	public void OnMaskAbility(InputValue value)
+		{
+			MaskAbilityInput(value.isPressed);
 		}
 		public void OnSlide(InputValue value)
 		{
@@ -65,13 +81,19 @@ using UnityEngine.InputSystem;
 			ExitGameCondition(value.isPressed);
 		}
 
-
-		public void MoveInput(Vector2 newMoveDirection)
+	public void MouseInput(Vector2 newMoveDirection)
+	{
+		mouseMove = newMoveDirection;
+	}
+	public void MoveInput(Vector2 newMoveDirection)
 		{
 			move = newMoveDirection;
-		} 
-
-		public void JumpInput(bool newJumpState)
+		}
+	public void MouseClickInput(bool newJumpState)
+	{
+		click = newJumpState;
+	}
+	public void JumpInput(bool newJumpState)
 		{
 			jump = newJumpState;
 		}
@@ -89,7 +111,10 @@ using UnityEngine.InputSystem;
 		{
 			slide = newSlideState;
 		}
-
+		public void MaskAbilityInput(bool newAbilityState)
+		{
+			onMaskAbility = newAbilityState;
+		}
 		public void DialogueEnterInput(bool newInteractState)
 		{
 			onConversationEnter = newInteractState;
