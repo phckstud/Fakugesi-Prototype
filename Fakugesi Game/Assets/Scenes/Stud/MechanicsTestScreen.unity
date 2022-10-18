@@ -1107,7 +1107,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   sceneBuildindex: 0
-  speed: 30
+  speed: 38
   jumpForce: 7.5
   realForce: 0
   doubleJumpMultiplier: 0
