@@ -195,7 +195,8 @@ public class PlayerMovement : MonoBehaviour
             if (InputManager.Instance.jump && isJumping)
             {
 
-                MusicManager.Instance.PlaySFX(MusicManager.Instance.Jump);
+               
+                //MusicManager.Instance.PlaySFX(MusicManager.Instance.Jump);
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
                 canDoubleJump = false;
