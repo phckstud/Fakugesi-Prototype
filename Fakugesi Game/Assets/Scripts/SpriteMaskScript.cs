@@ -17,7 +17,7 @@ public class SpriteMaskScript : MonoBehaviour
     [SerializeField] TilemapRenderer tileRenderer;
 
     public MaskType type = MaskType.OFF;
-    public float distance = 4f;
+    public float distance = 2f;
   
 
     void Start()
@@ -25,14 +25,14 @@ public class SpriteMaskScript : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null) tileRenderer = GetComponent<TilemapRenderer>();
 
-        if (target == null) target = GameObject.FindGameObjectWithTag("MainCamera");
+        if (target == null) target = GameObject.FindGameObjectWithTag("Player");
     }
 
 
     void Update()
     {
         updateShader();
-        //toggleShader();
+        toggleShader();
     }
     private float typeToInt()
     {
@@ -66,9 +66,10 @@ public class SpriteMaskScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Keypad7)) type = MaskType.YELLOW;
         if (Input.GetKeyDown(KeyCode.Keypad8)) type = MaskType.BLACK;
         if (Input.GetKeyDown(KeyCode.Keypad9)) type = MaskType.WHITE;
-        if (Input.GetKeyDown(KeyCode.I)) type = MaskType.NEGATIVE;
-        if (Input.GetKeyDown(KeyCode.O)) type = MaskType.GRAY;
-        if (Input.GetKeyDown(KeyCode.P)) type = MaskType.FADE;*/
+       */
+        if (InputManager.Instance.click) type = MaskType.NEGATIVE;
+        if (InputManager.Instance.onMaskAbility) type = MaskType.GRAY;
+        if (InputManager.Instance.onInteract) type = MaskType.FADE;
         //distance = Mathf.Clamp(distance + Input.GetAxis("Vertical"), -0.1f, 12f);// might have to comment this line out.
     }
     private void updateShader()
