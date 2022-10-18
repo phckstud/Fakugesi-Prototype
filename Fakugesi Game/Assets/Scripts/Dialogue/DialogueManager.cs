@@ -152,6 +152,7 @@ public class DialogueManager : Singleton<DialogueManager>
     private void ContinueStory()
     {
         InputManager.Instance.onInteract = false;
+        hasRunOnce = true;
 
         if (currentStory.canContinue)
         {
@@ -181,15 +182,16 @@ public class DialogueManager : Singleton<DialogueManager>
             //Check and Update Variables
            
             VariableManager.Instance.CheckAndUpdateVariables();
-
             
+
         }
         else
         {
+            hasRunOnce = true;
             StartCoroutine(ExitDialogueMode());
         }
 
-        hasRunOnce = true;
+        
     }
 
     private IEnumerator DisplayLine(string line)
