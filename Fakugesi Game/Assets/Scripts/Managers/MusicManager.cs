@@ -19,7 +19,7 @@ public class MusicManager : SingletonPersistent<MusicManager>
 
     [Header("Audio Clips")]
     [SerializeField] AudioClip[] jump;
-    [SerializeField] AudioClip walkOnDryGrass;
+    [SerializeField] AudioClip walkOnDryGrass, walkOnSpace, walkOnNormal;
 
     [Header("Floats")]
     public float audioVolume = 1;
@@ -117,6 +117,19 @@ public class MusicManager : SingletonPersistent<MusicManager>
     {
         /*int index = UnityEngine.Random.Range(0, walkOnDryGrass.Length);*/
         SoundEffects.clip = walkOnDryGrass;
+        SoundEffects.Play();
+    }
+    public void PlayNormalClip()
+    {
+        /*int index = UnityEngine.Random.Range(0, walkOnDryGrass.Length);*/
+        SoundEffects.clip = walkOnNormal;
+        SoundEffects.Play();
+    }
+
+    public void PlaySpaceClip()
+    {
+        /*int index = UnityEngine.Random.Range(0, walkOnDryGrass.Length);*/
+        SoundEffects.clip = walkOnSpace;
         SoundEffects.Play();
     }
     public void PlaySFX(AudioClip clip)

@@ -143,6 +143,10 @@ public class PlayerMovement : MonoBehaviour
 
             if (Physics2D.OverlapCircle(groundCheck.position, 0.25f, dryGrass))
                 MusicManager.Instance.PlayDryGrassClip();
+        if (Physics2D.OverlapCircle(groundCheck.position, 0.25f, normal))
+            MusicManager.Instance.PlayNormalClip();
+        if (Physics2D.OverlapCircle(groundCheck.position, 0.25f, space))
+            MusicManager.Instance.PlaySpaceClip();
     }
     void UpdateFaceDirection(Vector2 dir)
 	{
