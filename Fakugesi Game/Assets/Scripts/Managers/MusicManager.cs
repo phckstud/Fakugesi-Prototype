@@ -13,18 +13,13 @@ public class MusicManager : SingletonPersistent<MusicManager>
 	[Header("External Scripts")]
     public Sound[] sounds;
 
-    [Header("Unity Handles")]
-    public Canvas pauseCanvas;
-    public Slider mainMusic;
-    public Slider effectsmusic;
-
     [Header("Audio Sources")]
     public AudioSource BGMusic;
     public AudioSource SoundEffects;
 
     [Header("Audio Clips")]
-    public AudioClip[] bgMusic;
-    public AudioClip Click, Jump, CompleteLevel, spike, rotatingPlatform;
+    [SerializeField] AudioClip[] jump;
+    [SerializeField] AudioClip walkOnDryGrass;
 
     [Header("Floats")]
     public float audioVolume = 1;
@@ -80,7 +75,7 @@ public class MusicManager : SingletonPersistent<MusicManager>
     }
     private void Update()
     {
-        PlayBGSound();
+        //PlayBGSound();
       //  SetVolume();
        // PauseGame();
 
@@ -100,17 +95,30 @@ public class MusicManager : SingletonPersistent<MusicManager>
             BGMusic.Stop(); 
             return;
         }
-        int index = UnityEngine.Random.Range(0, bgMusic.Length);
+       // int index = UnityEngine.Random.Range(0, bgMusic.Length);
         if (!BGMusic.isPlaying)
         {
             Debug.Log("Not Playing");
-            BGMusic.clip = bgMusic[index];
+            //BGMusic.clip = bgMusic[index];
             BGMusic.Play();
             Debug.Log("Is Playing");
         }
 
     }
 
+    public void PlayJumpClip()
+	{
+        int index = UnityEngine.Random.Range(0, jump.Length);
+        SoundEffects.clip = jump[index];
+        SoundEffects.Play();
+    }
+
+    public void PlayDryGrassClip()
+    {
+        /*int index = UnityEngine.Random.Range(0, walkOnDryGrass.Length);*/
+        SoundEffects.clip = walkOnDryGrass;
+        SoundEffects.Play();
+    }
     public void PlaySFX(AudioClip clip)
     {
         SoundEffects.clip = clip;
@@ -118,24 +126,18 @@ public class MusicManager : SingletonPersistent<MusicManager>
         Debug.Log(clip.name + "is Playing");
     }
 
-    public void Play(string name)
+    public void PlaySFX(string name)
     {
         Sound SoundThatWeFind = Array.Find(sounds, sound => sound.Name == name);
 
-        if (!SoundThatWeFind.AudioSource.isPlaying)
-            SoundThatWeFind.AudioSource.Play();
+        SoundEffects.clip = SoundThatWeFind.clip;
+        SoundEffects.Play();
 
         if (SoundThatWeFind == null)
         {
             Debug.LogWarning("Music reference " + name + " is not found");
             return;
         }
-    }
-    public void GetPlayerPrefs(float v)
-    {
-        v = PlayerPrefs.GetFloat("SoundEffectsVolume");
-        effectsmusic.value = v;
-        mainMusic.value = PlayerPrefs.GetFloat("MainVolume");
     }
 
     public void SetVolume()
@@ -156,43 +158,5 @@ public class MusicManager : SingletonPersistent<MusicManager>
         PlayerPrefs.SetFloat("MainVolume", v);
     }
 
-    #region Pausing
-    public void PauseGame()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            isPaused = !isPaused;
-            pauseCanvas.gameObject.SetActive(isPaused);
-        }
-    }
 
-    public void ResumeGame()
-    {
-        PlaySFX(Click);
-        isPaused = !isPaused;
-        pauseCanvas.gameObject.SetActive(isPaused);
-    }
-    public void MainMenu()
-    {
-        PlaySFX(Click);
-        SceneManager.LoadScene(sceneName);
-
-        isPaused = false;
-        pauseCanvas.gameObject.SetActive(isPaused);
-    }
-
-    public void ExitGame()
-    {
-        PlaySFX(Click);
-        Application.Quit();
-        Debug.Log("GG");
-    }
-    #endregion
-
-    IEnumerator CanvasDisplay()
-    {
-        pauseCanvas.gameObject.SetActive(true);
-        yield return new WaitForSeconds(0.5f);
-        pauseCanvas.gameObject.SetActive(false);
-    }
 }
