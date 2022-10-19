@@ -141,11 +141,8 @@ public class PlayerMovement : MonoBehaviour
     public void WalkAudio()
 	{
 
-        if (InputManager.Instance.move.x == 1f || InputManager.Instance.move.x == -1f)
-        {
             if (Physics2D.OverlapCircle(groundCheck.position, 0.25f, dryGrass))
                 MusicManager.Instance.PlayDryGrassClip();
-        }
     }
     void UpdateFaceDirection(Vector2 dir)
 	{

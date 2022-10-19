@@ -1301,7 +1301,7 @@ ScriptedImporter:
     spriteName: 
     isGroup: 1
     parentIndex: -1
-    spriteID: 
+    spriteID: 00000000000000000000000000000000
     layerID: 240
     mosaicPosition: {x: 0, y: 0}
   - name: Layer 27 copy 41
@@ -1616,7 +1616,7 @@ ScriptedImporter:
     spriteName: 
     isGroup: 1
     parentIndex: -1
-    spriteID: 
+    spriteID: 00000000000000000000000000000000
     layerID: 76
     mosaicPosition: {x: 0, y: 0}
   - name: Clouds
