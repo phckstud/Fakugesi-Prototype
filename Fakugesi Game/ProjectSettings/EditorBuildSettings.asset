@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Stud/FirstLevelTest.unity
     guid: e28d02b17004edd4bbb5062951adb30e
+  - enabled: 1
+    path: Assets/Scenes/Musa/The Hub 2.unity
+    guid: 469e0e4782ebcff4f8564760662db5ae
   m_configObjects: {}
