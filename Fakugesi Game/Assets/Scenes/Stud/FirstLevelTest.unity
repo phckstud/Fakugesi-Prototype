@@ -2360,6 +2360,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 170add8217e2e7d419047e05895447da, type: 3}
   - {fileID: 8300000, guid: 7b046588199a4004ea3ab631a6764823, type: 3}
   walkOnDryGrass: {fileID: 8300000, guid: 6eab254dc815a2348aaea67ceeaa19cd, type: 3}
+  walkOnSpace: {fileID: 8300000, guid: 88b4dcc4e2a5a51469612bfc29d66b42, type: 3}
+  walkOnNormal: {fileID: 8300000, guid: abb52f1312e7be74c8a6f3b0dceb44dd, type: 3}
   audioVolume: 1
   isPaused: 0
   sceneName: 
