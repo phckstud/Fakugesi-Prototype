@@ -209,7 +209,7 @@ public class DialogueManager : Singleton<DialogueManager>
 
         canContinueToNextLine = false;
 
-        bool isAddingRichTextTag = false;
+        /*bool isAddingRichTextTag = false;
 
         // display each letter one at a time
         foreach (char letter in line.ToCharArray())
@@ -240,8 +240,8 @@ public class DialogueManager : Singleton<DialogueManager>
 				//dialogueText[dialogueIndex].maxVisibleCharacters++;
                 yield return new WaitForSeconds(typingSpeed);
             }
-        }
-
+        }*/
+        yield return new WaitForSeconds(typingSpeed);
         // actions to take after the entire line has finished displaying
         continueIcon.SetActive(true);
         DisplayChoices();
