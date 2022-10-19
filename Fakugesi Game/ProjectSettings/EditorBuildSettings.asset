@@ -6,10 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Stud/Exposition.unity
+    path: Assets/Scenes/To Build/Exposition.unity
     guid: d39760515ecc17346bfae280c44ac5e0
   - enabled: 1
-    path: Assets/Scenes/Stud/The Hub.unity
+    path: Assets/Scenes/To Build/The Hub.unity
     guid: 0ed62fb7b1f27814893e3685d7d09307
   - enabled: 1
     path: Assets/Scenes/Stud/FirstLevelTest.unity
