@@ -10,14 +10,19 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 	[SerializeField] string content;
 	[SerializeField] string header;
 
+	[Header("Offset")]
+	[SerializeField] float xOffset = 0.9f, yOffset = 0.5f;
 	void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
 	{
 		TooltipSystem.Show(content, header);
+		TooltipSystem.Position(this.transform.position, xOffset, yOffset);
+		this.GetComponent<InteractableObject>().StartHighlight();
 	}
 
 	void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
 	{
 		TooltipSystem.Hide();
+		this.GetComponent<InteractableObject>().StopHighlight();
 	}
 
 	public void ShowToolTip()
@@ -30,15 +35,15 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 		TooltipSystem.Hide();
 	}
 
-	private void OnMouseOver()
+	private void OnMouseEnter()
 	{
 		ShowToolTip();
-		GetComponent<InteractableObject>().StartHighlight();
+		this.GetComponent<InteractableObject>().StartHighlight();
 	}
 
 	private void OnMouseExit()
 	{
 		HideToolTip();
-		GetComponent<InteractableObject>().StopHighlight();
+		this.GetComponent<InteractableObject>().StopHighlight();
 	}
 }
