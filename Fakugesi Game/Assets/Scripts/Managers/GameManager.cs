@@ -6,9 +6,8 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-	#region Variables
-
-	[Header("Unity Handles")]
+    #region Variables
+    [Header("Unity Handles")]
     [SerializeField] Transform player;
     [SerializeField] GameObject Cam1, Cam2;
     public Animator anim;
@@ -63,8 +62,12 @@ public class GameManager : Singleton<GameManager>
 
 	
 
-	#region Camera and Cut-scenes
-	IEnumerator CamChanger()
+   
+
+
+
+#region Camera and Cut-scenes
+IEnumerator CamChanger()
     {
         if (animFinished == false)
         {
