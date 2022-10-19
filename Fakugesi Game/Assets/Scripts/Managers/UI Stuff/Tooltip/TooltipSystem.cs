@@ -22,6 +22,10 @@ public class TooltipSystem : Singleton<TooltipSystem>
 		Instance.toolTip.gameObject.SetActive(true);
 	}
 
+	public static void Position(Vector3 pos, float xPOffset, float yOffset)
+	{
+		Instance.toolTip.gameObject.transform.position = new Vector3(pos.x + xPOffset, pos.y + yOffset);
+	}
 	public static void ShowColourPicker(string header = "")
 	{
 		//Disable Previous Temporary Object

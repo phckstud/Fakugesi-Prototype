@@ -55,12 +55,13 @@ public class TooltipUI : MonoBehaviour
 				layoutElement.enabled = false;
 		}
 
-		Vector2 MousePos = Input.mousePosition;
+		/*Vector2 MousePos = InputManager.Instance.mouseMove;
+		Debug.Log(MousePos);
 
 		float pivotX = MousePos.x / Screen.width + xOffset;
 		float pivotY = MousePos.y / Screen.height + yOffset;
 
 		rect.pivot = new Vector2(pivotX, pivotY);
-		transform.position = MousePos;
+		transform.position = MousePos;*/
 	}
 }
