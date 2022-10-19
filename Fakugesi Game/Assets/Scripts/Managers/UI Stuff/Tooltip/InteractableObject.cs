@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InteractableObject : MonoBehaviour
 {
@@ -10,8 +11,8 @@ public class InteractableObject : MonoBehaviour
     [SerializeField] Quaternion startRot;
 
     [Header("Interacting Values")]
-    [SerializeField] Material defaultMat;
-    [SerializeField] Material highlightMat;
+    [SerializeField] Color defaultMat;
+    [SerializeField] Color highlightMat;
 
 	[Header("Floats")]
 	[SerializeField] float moveSpeed = 5f;
@@ -26,8 +27,7 @@ public class InteractableObject : MonoBehaviour
 
 	private void Awake()
 	{
-		if(defaultMat == null)
-			defaultMat = gameObject.GetComponent<Renderer>().sharedMaterial;
+			defaultMat = gameObject.GetComponent<Image>().color;
 
 		startingPos = transform.position;
 		currentPos = startingPos;
@@ -52,19 +52,20 @@ public class InteractableObject : MonoBehaviour
 
     public void StartHighlight()
 	{
-		gameObject.GetComponent<Renderer>().sharedMaterial = highlightMat;
+		this.GetComponent<Image>().color = highlightMat;
+		Debug.Log("Runs");
 	}
 
     public void StopHighlight()
 	{ 
-		gameObject.GetComponent<Renderer>().sharedMaterial = defaultMat;
+		this.GetComponent<Image>().color = defaultMat;
 	}
 
 	public void ChangeColour(Color c)
 	{
 		if(isColourPicker && isSelected)
 		{
-			defaultMat.color = c;
+			defaultMat = c;
 		}
 	}
 
