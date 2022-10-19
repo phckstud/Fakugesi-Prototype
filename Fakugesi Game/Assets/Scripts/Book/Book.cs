@@ -9,6 +9,7 @@ public class Book : MonoBehaviour
 {
     [Header("Unity Handles")]
     [SerializeField] GameObject middlePage;
+    [SerializeField] GameObject frontCover, insideRightPage;
     [SerializeField] Button openBtn;
     [SerializeField] Vector3 rotationVector, defaultRotationVector;
     [SerializeField] Vector3 startPos;
@@ -56,6 +57,8 @@ public class Book : MonoBehaviour
         startTime = DateTime.Now;
 
         openBtn.gameObject.SetActive(false);
+        frontCover.gameObject.SetActive(false);
+        insideRightPage.gameObject.SetActive(false);
         //Playbook opening sound
     }
 }

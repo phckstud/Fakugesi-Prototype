@@ -7,7 +7,6 @@ using UnityEngine;
 public class GameManager : Singleton<GameManager>
 {
 	#region Variables
-    public enum Difficulty { easy, medium, hard}
 
 	[Header("Unity Handles")]
     [SerializeField] Transform player;
@@ -26,8 +25,6 @@ public class GameManager : Singleton<GameManager>
 	[SerializeField] Sprite[] treasures;
     [SerializeField] Transform[] spawnPoints;
     public GameObject alliesPrefab, alliesParent, enemyPrefab, enemyParent;
-    public Difficulty difficultyScale;
-    public int difficultyEasy = 1, difficultyMedium = 3, difficultyHard = 5;
 
     [Header("Floats")]
     public float AnimFinished;
@@ -44,114 +41,27 @@ public class GameManager : Singleton<GameManager>
 	#endregion
 	void Start()
     {
-        ConfirmDifficulty();
-
-        SetUpEntireLevel();
-
         player = GameObject.FindGameObjectWithTag("Player").transform;
         //animFinished = false;
 
         if(anim != null)
             anim.Play(animName);
-
-      
     }
 
    
     void Update()
     {
        //StartCoroutine(CamChanger());
+       if(VariableManager.Instance != null)
+		{
+            if(VariableManager.Instance.GetStoryProgress())
+			{
+                SceneManager.LoadScene(sceneSuccessName);
+			}
+		}
     }
 
-	#region Level Set-Up
-    //For Start/Load
-    void SetUpEntireLevel()
-	{
-        if (VariableManager.Instance != null)
-        {
-            SetUpBackground();
-            SetUpTreasure();
-           // SetUpAllies();
-            SetUpDifficulty();
-        }
-	}
-
-    void SetUpBackground()
-	{
-        backgroundSpr.sprite = backgrounds[VariableManager.Instance.GetLocation()];
-
-	}
-
-    void SetUpTreasure()
-	{
-        treasureSpr.sprite = treasures[VariableManager.Instance.GetTreasure()];
-	}
-
-    void SetUpAllies()
-	{
-        Vector3 startPos = player.gameObject.transform.position;
-        //Vector3 posOffset = (endPos - startPos) / (VariableManager.Instance.GetNumberOfAllies() - 1);
-
-		for (int i = 0; i < VariableManager.Instance.GetNumberOfAllies(); i++)
-		{
-           GameObject allyprefab = Instantiate(alliesPrefab, startPos + offset, Quaternion.identity);
-           startPos += offset;
-           allyprefab.transform.SetParent(alliesParent.transform);
-        }
-	}
-    
-    void SetUpDifficulty()
-	{
-        switch(VariableManager.Instance.GetDifficultyScale())
-		{
-            case 0:
-                difficultyScale = Difficulty.easy;
-                break;
-            case 1:
-                difficultyScale = Difficulty.medium;
-                break;
-            case 2:
-                difficultyScale = Difficulty.hard;
-                break;
-            default:
-                Debug.LogWarning("Difficulty cannot be found: " + VariableManager.Instance.GetDifficultyScale());
-                break;
-		}
-
-        ConfirmDifficulty();
-	}
-
-    void ConfirmDifficulty()
-	{
-        switch(difficultyScale)
-		{
-            case Difficulty.easy:
-				for (int i = 0; i < difficultyEasy; i++)
-				{
-                    int randomSpawnPoint = Random.Range(0, spawnPoints.Length);
-				
-				}
-                break;
-            case Difficulty.medium:
-                for (int i = 0; i < difficultyMedium; i++)
-                {
-                    int randomSpawnPoint = Random.Range(0, spawnPoints.Length);
-                  
-                }
-                break;
-            case Difficulty.hard:
-                for (int i = 0; i < difficultyHard; i++)
-                {
-                    int randomSpawnPoint = Random.Range(0, spawnPoints.Length);
-                   
-                }
-                break;
-            default:
-                Debug.LogWarning("Difficulty ChoseN: " + difficultyScale);
-                break;
-        }
-	}
-	#endregion
+	
 
 	#region Camera and Cut-scenes
 	IEnumerator CamChanger()
