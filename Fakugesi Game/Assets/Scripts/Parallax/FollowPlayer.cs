@@ -7,6 +7,7 @@ using UnityEngine;
 // This script can be used to match the positional values of a
 // target transform. It's meant to be attached to the main camera
 // so that the camera follows the player (or whatever the target is).
+[ExecuteInEditMode]
 public class FollowPlayer : MonoBehaviour
 {
     [Header("Transform to Follow")]

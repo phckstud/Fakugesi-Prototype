@@ -14,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D rb;
     public Animator anim;
     [SerializeField] LayerMask ground;
+    [SerializeField] LayerMask dryGrass, normal, space;
     private SpriteRenderer sr;
 
     [Header("Integers")]
@@ -47,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Animation Strings")]
     [SerializeField] string playerIdle = "Rogue_idle_01";
     [SerializeField] string playerRun = "Rogue_run_01";
-    [SerializeField] string playerAtt = "Rogue_attack_02";
+    [SerializeField] string playerJump = "Rogue_attack_02";
 
 	private void Awake()
 	{
@@ -137,7 +138,15 @@ public class PlayerMovement : MonoBehaviour
         }
 
     }
+    public void WalkAudio()
+	{
 
+        if (InputManager.Instance.move.x == 1f || InputManager.Instance.move.x == -1f)
+        {
+            if (Physics2D.OverlapCircle(groundCheck.position, 0.25f, dryGrass))
+                MusicManager.Instance.PlayDryGrassClip();
+        }
+    }
     void UpdateFaceDirection(Vector2 dir)
 	{
         if (dir.x > 0.1f)
@@ -167,7 +176,8 @@ public class PlayerMovement : MonoBehaviour
             canDoubleJump = true;
             InputManager.Instance.jump = false;
 
-            //MusicManager.Instance.PlaySFX(MusicManager.Instance.Jump);
+            MusicManager.Instance.PlayJumpClip();
+            anim.Play(playerJump);
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
 
@@ -195,8 +205,10 @@ public class PlayerMovement : MonoBehaviour
             if (InputManager.Instance.jump && isJumping)
             {
 
-               
+
                 //MusicManager.Instance.PlaySFX(MusicManager.Instance.Jump);
+                MusicManager.Instance.PlayJumpClip();
+                anim.Play(playerJump);
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
                 canDoubleJump = false;
