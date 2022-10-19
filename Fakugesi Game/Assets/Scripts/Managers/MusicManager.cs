@@ -109,6 +109,8 @@ public class MusicManager : SingletonPersistent<MusicManager>
     public void PlayJumpClip()
 	{
         int index = UnityEngine.Random.Range(0, jump.Length);
+
+        if(jump != null)
         SoundEffects.clip = jump[index];
         SoundEffects.Play();
     }
@@ -116,12 +118,14 @@ public class MusicManager : SingletonPersistent<MusicManager>
     public void PlayDryGrassClip()
     {
         /*int index = UnityEngine.Random.Range(0, walkOnDryGrass.Length);*/
+        if(walkOnDryGrass != null)
         SoundEffects.clip = walkOnDryGrass;
         SoundEffects.Play();
     }
     public void PlayNormalClip()
     {
         /*int index = UnityEngine.Random.Range(0, walkOnDryGrass.Length);*/
+        if(walkOnNormal != null)
         SoundEffects.clip = walkOnNormal;
         SoundEffects.Play();
     }
@@ -129,6 +133,7 @@ public class MusicManager : SingletonPersistent<MusicManager>
     public void PlaySpaceClip()
     {
         /*int index = UnityEngine.Random.Range(0, walkOnDryGrass.Length);*/
+        if(walkOnSpace != null)
         SoundEffects.clip = walkOnSpace;
         SoundEffects.Play();
     }

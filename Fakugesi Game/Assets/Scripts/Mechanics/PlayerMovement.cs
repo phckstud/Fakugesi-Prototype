@@ -16,6 +16,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] LayerMask ground;
     [SerializeField] LayerMask dryGrass, normal, space;
     private SpriteRenderer sr;
+    [SerializeField]
+    SpriteMaskScript[] scripts;
 
     [Header("Integers")]
     public int sceneBuildindex;
@@ -33,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Mask Ability FLoats")]
     [SerializeField] float growMultiplier = 0.75f;
     [SerializeField] float decreaseGrowthMultiplier = 0.65f;
-    [SerializeField] float rangeForMouseMove = 7f;
+    [SerializeField] float rangeForMouseMove = 7f, maxDistance = 4f;
 
     [Header("Booleans")]
     public bool canMove;
@@ -69,6 +71,8 @@ public class PlayerMovement : MonoBehaviour
 
         if (mask != null)
             defaultMaskLocalScale = mask.localScale;
+
+        scripts = FindObjectsOfType<SpriteMaskScript>();
     }
 
     private void OnDestroy()
@@ -304,6 +308,12 @@ public class PlayerMovement : MonoBehaviour
 
                 if (mask.localScale.y <= maxMaskSize.y && mask.localScale.x <= maxMaskSize.x)
                     mask.localScale += new Vector3(mask.localScale.x, mask.localScale.y) * growMultiplier * Time.deltaTime;
+
+				/*foreach (var item in scripts)
+				{
+                    if(item.distance <= maxDistance)
+                         item.distance += item.distance * growMultiplier;
+				}*/
             }
             else
             {
@@ -315,9 +325,16 @@ public class PlayerMovement : MonoBehaviour
                     mask.gameObject.SetActive(false);
                 }
 
+                /*foreach (var item in scripts)
+                {
+                    if (item.distance > maxDistance)
+                        item.distance -= item.distance * growMultiplier;
+                    else
+                        item.distance = item.defaultDis;
+                }*/
             }
 
-            if (InputManager.Instance.click)
+           /* if (InputManager.Instance.click)
             {
                 //looks for player input/mouse position
                 Vector2 mousePos = InputManager.Instance.mouseMove;
@@ -335,8 +352,8 @@ public class PlayerMovement : MonoBehaviour
                     InputManager.Instance.click = false;
 
                 }
-                InputManager.Instance.click = false;
-            }
+                InputManager.Instance.click = false;*/
+            
         }
 	}
 	#endregion

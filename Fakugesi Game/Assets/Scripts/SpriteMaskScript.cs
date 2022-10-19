@@ -17,7 +17,7 @@ public class SpriteMaskScript : MonoBehaviour
     [SerializeField] TilemapRenderer tileRenderer;
 
     public MaskType type = MaskType.OFF;
-    public float distance = 2f;
+    public float distance = 2f, defaultDis;
   
 
     void Start()
@@ -26,6 +26,8 @@ public class SpriteMaskScript : MonoBehaviour
         if (spriteRenderer == null) tileRenderer = GetComponent<TilemapRenderer>();
 
         if (target == null) target = GameObject.FindGameObjectWithTag("Player");
+
+        defaultDis = distance;
     }
 
 
@@ -67,9 +69,9 @@ public class SpriteMaskScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Keypad8)) type = MaskType.BLACK;
         if (Input.GetKeyDown(KeyCode.Keypad9)) type = MaskType.WHITE;
        */
-        if (InputManager.Instance.click) type = MaskType.NEGATIVE;
-        if (InputManager.Instance.onMaskAbility) type = MaskType.GRAY;
-        if (InputManager.Instance.onInteract) type = MaskType.FADE;
+        //if (InputManager.Instance.click) type = MaskType.NEGATIVE;
+        //if (InputManager.Instance.onMaskAbility) type = MaskType.GRAY;
+        if (InputManager.Instance.onMaskAbility) type = MaskType.FADE;
         //distance = Mathf.Clamp(distance + Input.GetAxis("Vertical"), -0.1f, 12f);// might have to comment this line out.
     }
     private void updateShader()

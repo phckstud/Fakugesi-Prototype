@@ -337,7 +337,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7794021, y: 1}
+    m_SensorSize: {x: 1.7777778, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -396,6 +396,7 @@ MonoBehaviour:
   tileRenderer: {fileID: 0}
   type: 0
   distance: 4
+  defaultDis: 0
 --- !u!212 &332671052
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -563,6 +564,7 @@ MonoBehaviour:
   tileRenderer: {fileID: 0}
   type: 0
   distance: 2
+  defaultDis: 2
 --- !u!1 &507287255
 GameObject:
   m_ObjectHideFlags: 0
@@ -598,6 +600,7 @@ MonoBehaviour:
   tileRenderer: {fileID: 0}
   type: 0
   distance: 4
+  defaultDis: 0
 --- !u!212 &507287257
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -795,6 +798,7 @@ MonoBehaviour:
   tileRenderer: {fileID: 0}
   type: 0
   distance: 2
+  defaultDis: 0
 --- !u!1 &969675883
 GameObject:
   m_ObjectHideFlags: 0
@@ -839,17 +843,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds: []
-  pauseCanvas: {fileID: 0}
-  mainMusic: {fileID: 0}
-  effectsmusic: {fileID: 0}
   BGMusic: {fileID: 0}
   SoundEffects: {fileID: 0}
-  bgMusic: []
-  Click: {fileID: 0}
-  Jump: {fileID: 0}
-  CompleteLevel: {fileID: 0}
-  spike: {fileID: 0}
-  rotatingPlatform: {fileID: 0}
+  jump: []
+  walkOnDryGrass: {fileID: 0}
+  walkOnSpace: {fileID: 0}
+  walkOnNormal: {fileID: 0}
   audioVolume: 1
   isPaused: 0
   sceneName: 
@@ -1053,6 +1052,7 @@ MonoBehaviour:
   tileRenderer: {fileID: 0}
   type: 3
   distance: 4
+  defaultDis: 0
 --- !u!212 &1238801318
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1233,6 +1233,7 @@ MonoBehaviour:
   tileRenderer: {fileID: 0}
   type: 0
   distance: 2
+  defaultDis: 2
 --- !u!1 &1393751755
 GameObject:
   m_ObjectHideFlags: 0
@@ -1356,13 +1357,23 @@ MonoBehaviour:
   groundCheck: {fileID: 677665332}
   mask: {fileID: 1487013120}
   initialPos: {x: 0, y: 0}
-  maxMaskSize: {x: 25, y: 25, z: 1}
+  maxMaskSize: {x: 16, y: 16, z: 1}
   defaultMaskLocalScale: {x: 0, y: 0, z: 0}
   rb: {fileID: 1393751761}
   anim: {fileID: 1393751758}
   ground:
     serializedVersion: 2
     m_Bits: 64
+  dryGrass:
+    serializedVersion: 2
+    m_Bits: 0
+  normal:
+    serializedVersion: 2
+    m_Bits: 0
+  space:
+    serializedVersion: 2
+    m_Bits: 0
+  scripts: []
   sceneBuildindex: 0
   speed: 38
   jumpForce: 7.5
@@ -1373,9 +1384,10 @@ MonoBehaviour:
   defaultJumpingDisabler: 0
   fallMultiplier: 2.5
   lowJumpMultipler: 2
-  growMultiplier: 0.75
+  growMultiplier: 1.2
   decreaseGrowthMultiplier: 0.65
   rangeForMouseMove: 7
+  maxDistance: 8
   canMove: 0
   isOldGrounded: 0
   isJumping: 0
@@ -1388,7 +1400,7 @@ MonoBehaviour:
   sceneName: 
   playerIdle: PlayerTestIdle
   playerRun: PlayerTestMove
-  playerAtt: Rogue_attack_02
+  playerJump: Rogue_attack_02
 --- !u!58 &1393751760
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1630,10 +1642,6 @@ MonoBehaviour:
   alliesParent: {fileID: 0}
   enemyPrefab: {fileID: 0}
   enemyParent: {fileID: 0}
-  difficultyScale: 0
-  difficultyEasy: 1
-  difficultyMedium: 3
-  difficultyHard: 5
   AnimFinished: 0
   FadeFinished: 0
   offset: {x: 0, y: 0, z: 0}
